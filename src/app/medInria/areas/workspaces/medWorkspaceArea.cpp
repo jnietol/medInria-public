@@ -341,18 +341,13 @@ void medWorkspaceArea::removeToolBox(medToolBox *toolbox)
     d->toolBoxContainer->removeToolBox(toolbox);
 }
 
-bool medWorkspaceArea::setCurrentWorkspace(medAbstractWorkspaceLegacy *workspace)
+void medWorkspaceArea::setCurrentWorkspace(medAbstractWorkspaceLegacy *workspace)
 {
     if (d->currentWorkspace == workspace)
-        return true;
+        return;
 
     if (!d->workspaces.contains(workspace->identifier()))
-    {
-        if (!this->setupWorkspace(workspace->identifier()))
-        {
-            return false;
-        }
-    }
+        this->setupWorkspace(workspace->identifier());
 
     this->disconnect(this, SIGNAL(open(medDataIndex)), d->currentWorkspace, 0);
 
@@ -380,20 +375,14 @@ bool medWorkspaceArea::setCurrentWorkspace(medAbstractWorkspaceLegacy *workspace
 
     medParameterGroupManagerL::instance()->setCurrentWorkspace(workspace->identifier());
 
-    return true;
 }
 
-bool medWorkspaceArea::setCurrentWorkspace(const QString &id)
+void medWorkspaceArea::setCurrentWorkspace(const QString &id)
 {
     if (!d->workspaces.contains(id))
-    {
-        if (!this->setupWorkspace(id))
-        {
-            return false;
-        }
-    }
+        this->setupWorkspace(id);
 
-    return this->setCurrentWorkspace(d->workspaces.value(id));
+    this->setCurrentWorkspace(d->workspaces.value(id));
 }
 
 medAbstractWorkspaceLegacy* medWorkspaceArea::currentWorkspace()
@@ -401,10 +390,10 @@ medAbstractWorkspaceLegacy* medWorkspaceArea::currentWorkspace()
     return d->currentWorkspace;
 }
 
-bool medWorkspaceArea::setupWorkspace(const QString &id)
+void medWorkspaceArea::setupWorkspace(const QString &id)
 {
     if (d->workspaces.contains(id))
-        return true;
+        return;
 
     medAbstractWorkspaceLegacy *workspace = nullptr;
 
@@ -416,12 +405,10 @@ bool medWorkspaceArea::setupWorkspace(const QString &id)
     else
     {
         qWarning()<< "Workspace " << id << " couldn't be created";
-        return false;
+        return;
     }
     workspace->setupTabbedViewContainer();
     workspace->setInitialGroups();
-
-    return true;
 }
 
 void medWorkspaceArea::addDatabaseView(medDatabaseDataSource* dataSource)

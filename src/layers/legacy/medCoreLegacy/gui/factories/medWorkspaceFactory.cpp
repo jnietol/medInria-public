@@ -63,24 +63,9 @@ medAbstractWorkspaceLegacy *medWorkspaceFactory::createWorkspace(QString type,QW
     {
         return nullptr;
     }
+    medAbstractWorkspaceLegacy * workspace = d->creators[type]->creator(parent);
 
-    // create a deletable parent to clean up in case of constructor failure.
-    parent = new QWidget(parent);
-
-    try
-    {
-        return d->creators[type]->creator(parent);
-    }
-    catch (const std::exception& e)
-    {
-        qWarning() << e.what();
-    }
-    catch (...)
-    {
-    }
-
-    parent->deleteLater();
-    return nullptr;
+    return workspace;
 }
 
 /**

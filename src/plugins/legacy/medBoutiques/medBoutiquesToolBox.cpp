@@ -52,6 +52,7 @@ public:
 
     medAbstractData *output;
     QList<QUuid> expectedUuids;
+    bool importOutputSignalConnected = false;
 };
 
 medBoutiquesToolBox::medBoutiquesToolBox(QWidget *parent) : medAbstractSelectableToolBox(parent), d(new medBoutiquesToolBoxPrivate)
@@ -137,14 +138,21 @@ void medBoutiquesToolBox::executionSuccess(const QString &outputFileName)
     QUuid uuid = medDataManager::instance()->importPath(outputFileName, false);
     d->expectedUuids.append(uuid);
     connect(medDataManager::instance(), SIGNAL(dataImported(medDataIndex, QUuid)), this, SLOT(open_waitForImportedSignal(medDataIndex, QUuid)));
+
+    if(!d->importOutputSignalConnected) {
+        d->importOutputSignalConnected = true;
+        connect(this, SIGNAL(success()), this->getWorkspace(), SLOT(importProcessOutput()), Qt::UniqueConnection);
+    }
 }
 
 void medBoutiquesToolBox::open_waitForImportedSignal(medDataIndex index, QUuid uuid)
 {
-    if(d->expectedUuids.contains(uuid)) {
+    if(d->expectedUuids.contains(uuid))
+    {
         d->expectedUuids.removeAll(uuid);
         disconnect(medDataManager::instance(), SIGNAL(dataImported(medDataIndex,QUuid)), this, SLOT(open_waitForImportedSignal(medDataIndex,QUuid)));
-        if (index.isValid()) {
+        if (index.isValid())
+        {
             d->output = medDataManager::instance()->retrieveData(index);
             emit success();
         }

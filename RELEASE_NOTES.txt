@@ -1,4 +1,5 @@
 medInria 3.2:
+- Switch ITK to version 5.1.1
 - Add some tooltips in view navigator
 - Avoid crashes if you try to open fibers data in some toolboxes
 - DICOM: keep more metadata
@@ -7,6 +8,8 @@ medInria 3.2:
 - Fix a bug double-cliking in Polygon ROI
 - Scenes: add an import and export functionality, to save the view and your parameters
 - Video Export: add the export of a view as .ogv [or .mp4 possibility] or batch of .jpeg. By time, rotation of a mesh or slice
+- Fix some small bugs
+
 
 medInria v3.1.1:
 - Viewer optimization: opening data is quicker, debug a window/level lag

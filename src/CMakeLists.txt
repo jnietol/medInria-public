@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 3.19)
 set(QT_VERSION_MAJOR 5)
 
 if(NOT DEFINED ${medInria_VERSION})
-    set(medInria_VERSION 5.0.0)
+    set(medInria_VERSION 5.0.1)
 endif()
 
 include(CMakePackageConfigHelpers)

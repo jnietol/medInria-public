@@ -43,7 +43,7 @@ set(git_url ${GITHUB_PREFIX}InsightSoftwareConsortium/ITK.git)
 if(${USE_LASTEST_ITK})
   set(git_tag master)
 else()
-  set(git_tag v5.4rc04)
+  set(git_tag v5.4.5)
 endif()
 
 

@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 3.19)
 set(QT_VERSION_MAJOR 5)
 
 if(NOT DEFINED ${medInria_VERSION})
-    set(medInria_VERSION 5.0.0)
+    set(medInria_VERSION 5.0.1)
 endif()
 
 include(CMakePackageConfigHelpers)
@@ -83,6 +83,11 @@ option(USE_FFmpeg
   )
 endif()
 
+option(USE_Python
+  "Build with Python support"
+  ON
+  )
+
 ## #############################################################################
 ## Find package
 ## #############################################################################
@@ -102,6 +107,10 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
   )
 
 find_package(dtk REQUIRED)
+
+if(USE_Python)
+    find_package(pyncpp REQUIRED COMPONENTS CPP_API Qt5)
+endif()
 
 ## #############################################################################
 ## enable c++ 17

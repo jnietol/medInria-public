@@ -291,7 +291,7 @@ medAbstractData * medDataImporter::readFiles(QList<medAbstractDataReader *> &rea
             ++i;
         }
 
-        for (i; i < readers.size(); ++i)
+        for (int i; i < readers.size(); ++i)
         {
             delete(readers[i]);
             readers[i] = nullptr;
@@ -672,7 +672,17 @@ QString medDataImporter::getVolumeId(medAbstractData * data)
 
 void medDataImporter::detectVolumes(QStringList pathsIn, QString & rootDir, QMap<QString /*volumeId*/, QString /*index*/> & volumeIndexMap, QMap<QString /*volumeId*/, QPair<QString /*name*/, QString /*relPaths*/>> & volumeRelativeMap)
 {
-    findVolumesInFiles(pathsIn);
+    // The user can open a directory of files or a list of files
+    QFileInfo info(pathsIn[0]);
+    if (info.isDir())
+    {
+        findVolumesInDirectory(pathsIn[0]);
+    }
+    else
+    {
+        findVolumesInFiles(pathsIn);
+    }
+
     QStringList volumePaths;
     for (auto volumeId : m_pathsVolumesMap.keys())
     {
@@ -687,9 +697,10 @@ void medDataImporter::detectVolumes(QStringList pathsIn, QString & rootDir, QMap
     }
 
     QStringList relPathList;
-    qDebug() << "avant rootDir";    if (!volumePaths.isEmpty())
+    
+    if (!volumePaths.isEmpty())
     {
-        auto rootList = computeRootPathOfListPath(volumePaths, relPathList).split('/', QString::SkipEmptyParts);
+        auto rootList = computeRootPathOfListPath(volumePaths, relPathList).split('/', Qt::SkipEmptyParts);
         rootDir = rootList.last();
     }
  

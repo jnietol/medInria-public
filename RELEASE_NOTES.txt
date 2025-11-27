@@ -21,6 +21,7 @@ medInria 5.0:
     * Compilation on Ubuntu 24.
     * Switch to ITK v5.4.5.
     * Python integration.
+    * Fix DICOM import.
 
 medInria 4.0:
 - INFORMATION: this version of medInria is NOT packaged with Anima plugins. We apologize for the inconvenience, we're working on adding them in a near release.

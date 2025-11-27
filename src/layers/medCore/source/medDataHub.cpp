@@ -128,7 +128,7 @@ medAbstractData * medDataHub::variantToMedAbstractData(QVariant &data, const med
 
 			QString hruUri = pModel->toPath(modelIndex);
 			QString name = hruUri.right(hruUri.size() - hruUri.lastIndexOf("\r\n") - 2);
-			QStringList hruUriAsList = hruUri.split("\r\n", QString::SkipEmptyParts);
+			QStringList hruUriAsList = hruUri.split("\r\n", Qt::SkipEmptyParts);
 			pDataRes->setExpectedName(name);
 			pDataRes->setMetaData(medMetaDataKeys::key("SeriesDescription"), name);
 
@@ -226,7 +226,6 @@ void medDataHub::getDirectData(const medDataIndex & index, medAbstractData * &pD
 
 void medDataHub::getAsyncData(const medDataIndex & index, medAbstractData * &pDataRes)
 {
-    bool bOk = true;
     asyncRequest rqst;
     rqst.dataName = getDataName(index);
     rqst.uri = index;
@@ -553,8 +552,6 @@ public:
 
     void run() override
     {
-        auto dstSourceId = m_destinationIndex.sourceId();
-        medSourceModel *pModelDst = m_pHub->getModel(dstSourceId);
         medAbstractData * data = m_pHub->getData(m_index);
         if (data)
         {
@@ -709,8 +706,8 @@ bool medDataHub::writeResults(QString pi_sourceId, medAbstractData * pi_pData, Q
     QMap<int, QString> knownKeys;
 
 
-    auto originPath = pathOfRelatedData.split("\r\n", QString::SkipEmptyParts);
-    auto sugestedPath = pi_sugestedPath.split("\r\n", QString::SkipEmptyParts);
+    auto originPath = pathOfRelatedData.split("\r\n", Qt::SkipEmptyParts);
+    auto sugestedPath = pi_sugestedPath.split("\r\n", Qt::SkipEmptyParts);
 
     QString suggestedSourceId;
     // ////////////////////////////////////////////////////////////////////////////////////////
@@ -762,7 +759,7 @@ bool medDataHub::writeResults(QString pi_sourceId, medAbstractData * pi_pData, Q
         {
             path = pWp->computePath(pi_sourceId, path, metaData);
         }
-        bRes = createPath(pi_sourceId, path.split("\r\n", QString::SkipEmptyParts), uri, knownKeys);
+        bRes = createPath(pi_sourceId, path.split("\r\n", Qt::SkipEmptyParts), uri, knownKeys);
         // ////////////////////////////////////////////////////////////////////////////////////////
 
         // ////////////////////////////////////////////////////////////////////////////////////////
@@ -1123,7 +1120,6 @@ bool medDataHub::fetchData(medDataIndex const & index)
     auto sourceId = index.sourceId();
 
     medSourceModel *pModel = getModel(sourceId);
-    medSourceModelItem *pItem = pModel->getItem(index);
     if (pModel)
     {
         int iRequestId = m_sourcesHandler->getAsyncData(index);
@@ -1242,16 +1238,14 @@ QList<medAbstractData*> medDataHub::loadDataFromPathAsIndex(medDataIndex index, 
     QMap<QString, QPair<QString, QString>> volumeRelMap;
     QString rootDir;
 
-    std::shared_ptr<medNotif> notif = medNotif::createNotif(notifLevel::info, QString("Load File ") + index.asString(), " from local file system", -1, -1);
-
-
     QStringList paths = indexToFileSysPath(index.asString());
     if (QFileInfo(paths[0]).exists())
     {
+        medNotif::createNotif(notifLevel::info, QString("Load File "), paths[0], -1, -1);
+
         importer.detectVolumes(paths, rootDir, volumePathsMap, volumeRelMap);
         for (auto volumeId : volumePathsMap.keys())
         {
-
             auto volumeIndex = volumePathsMap[volumeId];
             if (m_IndexToData.contains(volumeIndex))
             {
@@ -1262,8 +1256,6 @@ QList<medAbstractData*> medDataHub::loadDataFromPathAsIndex(medDataIndex index, 
             }
             else //we iterate on detected volumes
             {
-                std::shared_ptr<medNotif> notif = medNotif::createNotif(notifLevel::info, QString("Load File ") + paths[0], " from local file system", -1, -1);
-
                 auto data = importer.convertMultipleData(indexToFileSysPath(volumeIndex))[0];
                 data->setDataIndex(volumeIndex);
                 m_IndexToData[volumeIndex] = data;
@@ -1433,7 +1425,6 @@ void medDataHub::getDataTypeFS(const medDataIndex & index, int &iRes)
 
         while (i < paths.size() && (!isFolder || !isDataset))
         {
-            auto & path = paths[i];
             QFileInfo fi(paths[i]);
             if (fi.exists())
             {

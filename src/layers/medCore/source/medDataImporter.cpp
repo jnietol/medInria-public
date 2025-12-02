@@ -290,12 +290,6 @@ medAbstractData * medDataImporter::readFiles(QList<medAbstractDataReader *> &rea
             }
             ++i;
         }
-
-        for (int i; i < readers.size(); ++i)
-        {
-            delete(readers[i]);
-            readers[i] = nullptr;
-        }
     }
 
     return medDataRes;
